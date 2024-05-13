@@ -17,7 +17,7 @@ namespace AzureStorageLibrary.Interfaces
 
         Task<TEntity> Update(TEntity entity);
 
-        Task<IQueryable<TEntity>> All();
+        IQueryable<TEntity> All();
 
         IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> query);
 
