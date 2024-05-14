@@ -34,12 +34,10 @@ namespace AzureStorageLibrary.Services
 
         public async Task<TEntity> Add(TEntity entity)
         {
-            await _tableClient.UpsertEntityAsync(entity);
-            return entity;
+            //await _tableClient.UpsertEntityAsync(entity);
+            //return entity;
 
-
-
-            //return  tableClient.UpsertEntity(entity) is TEntity value ? value : default(TEntity);
+            return _tableClient.UpsertEntity(entity) is TEntity value ? value : default(TEntity);
 
 
 
@@ -75,7 +73,7 @@ namespace AzureStorageLibrary.Services
 
         public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> query)
         {
-           
+           return _tableClient.Query<TEntity>(query).AsQueryable();
         }
 
         public async Task<TEntity> Update(TEntity entity)
