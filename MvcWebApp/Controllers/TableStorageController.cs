@@ -16,7 +16,21 @@ namespace MvcWebApp.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.products = _noSqlStorage.All().ToList();
+
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Product product)
+        {
+            product.RowKey = Guid.NewGuid().ToString();
+            product.PartitionKey = "Kalemler";
+
+
+            await _noSqlStorage.Add(product);
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using AzureStorageLibrary.Interfaces;
 using Microsoft.Extensions.Azure;
@@ -19,9 +20,11 @@ namespace AzureStorageLibrary.Services
 
         public TableStorage()
         {
+            _cloudTableClient = new TableServiceClient(ConnectionStrings.AzureStorageConnectionString);
             //Cosmos kütüphanesi ile burada fark var. Patlayabilir
-            _cloudTableClient = new TableServiceClient(
-            new Uri(ConnectionStrings.AzureStorageConnectionString));
+
+            //_cloudTableClient = new TableServiceClient(
+            //new Uri(ConnectionStrings.AzureStorageConnectionString));
 
             _tableClient = _cloudTableClient.GetTableClient(typeof(TEntity).Name);
             _tableClient.CreateIfNotExists();
@@ -36,7 +39,6 @@ namespace AzureStorageLibrary.Services
         {
             //await _tableClient.UpsertEntityAsync(entity);
             //return entity;
-
             return _tableClient.UpsertEntity(entity) is TEntity value ? value : default(TEntity);
 
 
@@ -73,7 +75,9 @@ namespace AzureStorageLibrary.Services
 
         public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> query)
         {
-           return _tableClient.Query<TEntity>(query).AsQueryable();
+            Pageable<TEntity> queryResult = _tableClient.Query<TEntity>(query);
+           //return _tableClient.Query<TEntity>(query).AsQueryable();
+           return queryResult.AsQueryable();
         }
 
         public async Task<TEntity> Update(TEntity entity)

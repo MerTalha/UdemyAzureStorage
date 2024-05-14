@@ -14,9 +14,9 @@ namespace AzureStorageLibrary.Models
         public double Price { get; set; }
         public int Stock { get; set; }
         public string Color { get; set; }
-        public string PartitionKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string RowKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTimeOffset? Timestamp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ETag ETag { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset? Timestamp { get; set; }
+        public ETag ETag { get; set; }
     }
 }
