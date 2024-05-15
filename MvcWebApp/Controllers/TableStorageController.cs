@@ -17,6 +17,7 @@ namespace MvcWebApp.Controllers
         public IActionResult Index()
         {
             ViewBag.products = _noSqlStorage.All().ToList();
+            ViewBag.IsUpdate = false;
 
             return View();
         }
@@ -29,6 +30,25 @@ namespace MvcWebApp.Controllers
 
 
             await _noSqlStorage.Add(product);
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Update(string rowKey, string partitionKey)
+        {
+            var product = await _noSqlStorage.Get(rowKey, partitionKey);
+
+            ViewBag.products = _noSqlStorage.All().ToList();
+            ViewBag.IsUpdate = true;
+
+            return View("Index", product);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(Product product)
+        {
+            ViewBag.IsUpdate = true;
+            await _noSqlStorage.Update(product);
 
             return RedirectToAction("Index");
         }
