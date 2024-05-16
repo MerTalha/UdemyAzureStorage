@@ -8,9 +8,9 @@ namespace AzureStorageLibrary.Interfaces
 {
     public enum EContainerName
     {
-        Pictures,
-        Pdf,
-        Logs
+        pictures,
+        pdf,
+        logs
     }
     public interface IBlobStorage
     {
