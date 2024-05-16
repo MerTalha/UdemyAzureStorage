@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using AzureStorageLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,15 @@ namespace AzureStorageLibrary.Services
             _blobServiceClient = new BlobServiceClient(ConnectionStrings.AzureStorageConnectionString);
         }
 
-        public string BlobUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string BlobUrl => "http://127.0.0.1:10000/devstoreaccount1";
 
-        public Task DeleteAsync(string fileName)
+        public async Task DeleteAsync(string fileName, EContainerName eContainerName)
         {
-            throw new NotImplementedException();
+            var containerClient = _blobServiceClient.GetBlobContainerClient(eContainerName.ToString());
+
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            await blobClient.DeleteAsync();
         }
 
         public async Task<Stream> DownloadAsync(string fileName, EContainerName eContainerName)
@@ -30,26 +35,73 @@ namespace AzureStorageLibrary.Services
 
             var blobClient = containerClient.GetBlobClient(fileName);
 
-            var info = await blobClient.DownloadToAsync(fileName);
+            var info = await blobClient.DownloadStreamingAsync();
 
-            return info.ContentStream;
+            return info.Value.Content;
 
 
         }
 
-        public Task<List<string>> GetLogAsync(string fileName)
+        public async Task<List<string>> GetLogAsync(string fileName)
         {
-            throw new NotImplementedException();
+            List<string> logs = new List<string>();
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(EContainerName.Logs.ToString());
+
+            var appendBlobClient = containerClient.GetAppendBlobClient(fileName);
+
+            await appendBlobClient.CreateIfNotExistsAsync();
+
+            var info = await appendBlobClient.DownloadStreamingAsync();
+
+            using(StreamReader sr = new StreamReader(info.Value.Content))
+            {
+                string line = string.Empty;
+
+                while((line = sr.ReadLine()) != null)
+                {
+                    logs.Add(line);
+                }
+            }
+            return logs;
         }
 
         public List<string> GetNames(EContainerName eContainerName)
         {
-            throw new NotImplementedException();
+            List<string> blobNames = new List<string>();
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(eContainerName.ToString());
+
+            var blobs = containerClient.GetBlobs();
+
+            blobs.ToList().ForEach(blob =>
+            {
+                blobNames.Add(blob.Name);
+            });
+
+            return blobNames;
         }
 
-        public Task SetLog(string text, string fileName)
+        public async Task SetLogAsync(string text, string fileName)
         {
-            throw new NotImplementedException();
+            var containerClient = _blobServiceClient.GetBlobContainerClient(EContainerName.Logs.ToString());
+
+            var appendBlobClient = containerClient.GetAppendBlobClient(fileName);
+
+            await appendBlobClient.CreateIfNotExistsAsync();
+
+            using(MemoryStream ms = new MemoryStream())
+            {
+                using(StreamWriter sw = new StreamWriter(ms))
+                {
+                    sw.Write($"{DateTime.Now} : {text}/n");
+
+                    sw.Flush();
+                    ms.Position = 0;
+
+                    await appendBlobClient.AppendBlockAsync(ms);
+                }
+            }
         }
 
         public async Task UploadAsync(Stream fileStream, string fileName, EContainerName eContainerName)
