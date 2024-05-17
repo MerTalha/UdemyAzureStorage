@@ -2,17 +2,17 @@
     ViewData["Title"] = "Index";
 }
 <h2>Save Picture</h2>
-<form asp-action="Upload" method="post" enctype="multipart/form-data">
+<form name="update-form" asp-action="Upload" method="post" enctype="multipart/form-data">
     <input type="file" name="picture" />
     <button class="  btn btn-primary" type="submit">Save</button>
 </form>
 
-<h2>Logs</h2>
-@foreach (var item in ViewBag.logs as List<string>)
+@* <h2>Logs</h2>
+@foreach (var item in ViewBag.Blobs as List<string>)
 {
     <div>@item</div>
 
-}
+} *@
 
 <h2>Pictures</h2>
 <table class="table table-bordered">

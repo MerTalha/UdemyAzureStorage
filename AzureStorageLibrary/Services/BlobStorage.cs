@@ -73,7 +73,6 @@ namespace AzureStorageLibrary.Services
             var containerClient = _blobServiceClient.GetBlobContainerClient(eContainerName.ToString());
 
             var blobs = containerClient.GetBlobs();
-
             
             blobs.ToList().ForEach(x =>
             {
@@ -115,7 +114,7 @@ namespace AzureStorageLibrary.Services
 
             var blobClient = containerClient.GetBlobClient(fileName);
 
-            await blobClient.UploadAsync(fileStream);
+            await blobClient.UploadAsync(fileStream,true);
         }
     }
 }
