@@ -33,8 +33,22 @@ namespace MvcWebApp.Controllers
             await _blobStorage.UploadAsync(picture.OpenReadStream(), newFileName, EContainerName.pictures);
 
             return RedirectToAction("Index");
-        } 
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> Download(string fileName)
+        {
+            var stream = await _blobStorage.DownloadAsync(fileName, EContainerName.pictures);
+
+            return File(stream, "application/octet-stream", fileName);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string fileName)
+        {
+            await _blobStorage.DeleteAsync(fileName, EContainerName.pictures);
+            return RedirectToAction("Index");
+        }
 
     }
 }
