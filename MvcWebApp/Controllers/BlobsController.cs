@@ -15,12 +15,13 @@ namespace MvcWebApp.Controllers
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var names = _blobStorage.GetNames(EContainerName.pictures);
             string blobUrl = $"{_blobStorage.BlobUrl}/{EContainerName.pictures.ToString()}";
             ViewBag.blobs = names.Select(x => new FileBlob { Name = x, Url = $"{blobUrl}/{x}" }).ToList();
 
+            ViewBag.logs = await _blobStorage.GetLogAsync("controller.txt");
             return View();
         }
 
@@ -28,9 +29,13 @@ namespace MvcWebApp.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Upload([FromForm] IFormFile picture)
         {
+            await _blobStorage.SetLogAsync("Upload methoduna giriş yapıldı", "controller.txt");
+
             var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(picture.FileName);
 
             await _blobStorage.UploadAsync(picture.OpenReadStream(), newFileName, EContainerName.pictures);
+
+            await _blobStorage.SetLogAsync("Upload methodundan çıkış yapıldı", "controller.txt");
 
             return RedirectToAction("Index");
         }
@@ -40,6 +45,8 @@ namespace MvcWebApp.Controllers
         {
             var stream = await _blobStorage.DownloadAsync(fileName, EContainerName.pictures);
 
+            await _blobStorage.SetLogAsync("Dosya indirildi: " + fileName, "controller.txt");
+
             return File(stream, "application/octet-stream", fileName);
         }
 
@@ -47,6 +54,9 @@ namespace MvcWebApp.Controllers
         public async Task<IActionResult> Delete(string fileName)
         {
             await _blobStorage.DeleteAsync(fileName, EContainerName.pictures);
+
+            await _blobStorage.SetLogAsync("Dosya silindi: " + fileName, "controller.txt");
+
             return RedirectToAction("Index");
         }
 
