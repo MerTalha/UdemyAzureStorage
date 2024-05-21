@@ -3,6 +3,7 @@ using Azure.Data.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,14 +14,14 @@ namespace AzureStorageLibrary.Models
     public class UserPicture : ITableEntity
     {
         public string RawPaths { get; set; }
-        [JsonIgnore]
+        [IgnoreDataMember]
         public List<string> Paths
         {
             get => RawPaths == null ? null : JsonSerializer.Deserialize<List<string>>(RawPaths);
             set => RawPaths = JsonSerializer.Serialize(value);
         }
         public string WatermarkRawPaths { get; set; }
-        [JsonIgnore]
+        [IgnoreDataMember]
         public List<string> WatermarkPaths
         {
             get => WatermarkRawPaths == null ? null: JsonSerializer.Deserialize<List<string>>(WatermarkRawPaths);
