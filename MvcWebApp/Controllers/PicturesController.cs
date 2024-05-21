@@ -31,8 +31,41 @@ namespace MvcWebApp.Controllers
                     fileBlobs.Add(new FileBlob { Name = x, Url = $"{_blobStorage.BlobUrl}/{EContainerName.pictures}/{x}" });
                 });
             }
-
+            ViewBag.fileBlobs = fileBlobs;
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(IEnumerable<IFormFile> pictures)
+        {
+            List<string> picturesList = new List<string>();
+            foreach (var item in pictures)
+            {
+                var newPictureName = $"{Guid.NewGuid()}{Path.GetExtension(item.FileName)}";
+
+                await _blobStorage.UploadAsync(item.OpenReadStream(), newPictureName, EContainerName.pictures);
+
+                picturesList.Add(newPictureName);
+            }
+
+            var isUser = await _noSqlStorage.Get(UserId, City);
+
+            if(isUser != null)
+            {
+                picturesList.AddRange(isUser.Paths);
+            }
+            else
+            {
+                isUser = new UserPicture();
+
+                isUser.RowKey = UserId;
+                isUser.PartitionKey = City;
+                isUser.Paths = picturesList;
+            }
+
+            await _noSqlStorage.Add(isUser);
+
+            return RedirectToAction("Index");
         }
 
     }
