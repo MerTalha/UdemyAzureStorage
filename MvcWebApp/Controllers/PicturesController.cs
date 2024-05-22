@@ -1,7 +1,10 @@
 ﻿using AzureStorageLibrary.Interfaces;
 using AzureStorageLibrary.Models;
+using AzureStorageLibrary.Services;
 using Microsoft.AspNetCore.Mvc;
 using MvcWebApp.Models;
+using System.Text;
+using System.Text.Json;
 
 namespace MvcWebApp.Controllers
 {
@@ -72,5 +75,17 @@ namespace MvcWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> AddWatermark(PictureWatermarkQueue pictureWatermarkQueue)
+        {
+            var jsonString = JsonSerializer.Serialize(pictureWatermarkQueue);
+
+            string jsonStringBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+
+            AzQueue azQueue = new AzQueue("watermarkqueue");
+
+            await azQueue.SendMessageAsync(jsonStringBase64);
+
+            return Ok();
+        }
     }
 }
