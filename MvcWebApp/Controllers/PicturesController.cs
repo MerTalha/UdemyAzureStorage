@@ -19,12 +19,13 @@ namespace MvcWebApp.Controllers
         }
 
         public async Task<IActionResult>Index()
+       
         {
             List<FileBlob> fileBlobs = new List<FileBlob>();
 
             var user = await _noSqlStorage.Get(UserId, City);
 
-            if (user != null)
+            if (user != null && fileBlobs != null)
             {
                 user.Paths.ForEach(x =>
                 {

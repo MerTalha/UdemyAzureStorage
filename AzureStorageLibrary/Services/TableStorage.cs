@@ -39,9 +39,20 @@ namespace AzureStorageLibrary.Services
         {
             //await _tableClient.UpsertEntityAsync(entity);
             //return entity;
-            return _tableClient.UpsertEntity(entity) is TEntity value ? value : default(TEntity);
 
 
+            //return _tableClient.UpsertEntity(entity) is TEntity value ? value : default(TEntity);
+
+            try
+            {
+                await _tableClient.UpsertEntityAsync(entity, TableUpdateMode.Merge);
+                return entity;
+            }
+            catch (RequestFailedException ex)
+            {
+                Console.WriteLine($"RequestFailedException: {ex.Message}");
+                throw;
+            }
 
             //var tableClient = _cloudTableClient.GetTableClient(typeof(TEntity).Name);
 

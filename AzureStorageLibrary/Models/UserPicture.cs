@@ -13,24 +13,30 @@ namespace AzureStorageLibrary.Models
 {
     public class UserPicture : ITableEntity
     {
-        public string RawPaths { get; set; }
-        [IgnoreDataMember]
-        public List<string> Paths
-        {
-            get => RawPaths == null ? null : JsonSerializer.Deserialize<List<string>>(RawPaths);
-            set => RawPaths = JsonSerializer.Serialize(value);
-        }
-        public string WatermarkRawPaths { get; set; }
-        [IgnoreDataMember]
-        public List<string> WatermarkPaths
-        {
-            get => WatermarkRawPaths == null ? null: JsonSerializer.Deserialize<List<string>>(WatermarkRawPaths);
-            set => WatermarkRawPaths = JsonSerializer.Serialize(value);
-        }
+        public List<string> RawPaths { get; set; }
+        public List<string> WatermarkRawPaths { get; set; }
 
-        public string PartitionKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string RowKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTimeOffset? Timestamp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ETag ETag { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        //[JsonIgnore]
+        //public List<string> Paths
+        //{
+        //    get => string.IsNullOrEmpty(RawPaths) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(RawPaths);
+        //    set => RawPaths = value == null || value.Count == 0 ? null : JsonSerializer.Serialize(value);
+        //}
+        //[JsonIgnore]
+        //public List<string> WatermarkPaths
+        //{
+        //    get => string.IsNullOrEmpty(RawPaths) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(WatermarkRawPaths);
+        //    set => WatermarkRawPaths = JsonSerializer.Serialize(value);
+        //}
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset? Timestamp { get; set; }
+        public ETag ETag { get; set; }
+
+        public UserPicture()
+        {
+            PartitionKey = string.Empty;
+            RowKey = string.Empty;
+        }
     }
 }
