@@ -9,23 +9,25 @@ namespace MvcWebApp.Controllers
     {
         public string UserId { get; set; } = "12345";
         public string City { get; set; } = "istanbul";
-
         private readonly INoSqlStorage<UserPicture> _noSqlStorage;
         private readonly IBlobStorage _blobStorage;
+
         public PicturesController(INoSqlStorage<UserPicture> noSqlStorage, IBlobStorage blobStorage)
         {
             _noSqlStorage = noSqlStorage;
             _blobStorage = blobStorage;
         }
 
-        public async Task<IActionResult>Index()
-       
+        public async Task<IActionResult> Index()
         {
+            //ViewBag.UserId = UserId;
+            //ViewBag.City = City;
+
             List<FileBlob> fileBlobs = new List<FileBlob>();
 
             var user = await _noSqlStorage.Get(UserId, City);
 
-            if (user != null && fileBlobs != null)
+            if (user != null)
             {
                 user.Paths.ForEach(x =>
                 {
@@ -51,9 +53,10 @@ namespace MvcWebApp.Controllers
 
             var isUser = await _noSqlStorage.Get(UserId, City);
 
-            if(isUser != null)
+            if (isUser != null)
             {
                 picturesList.AddRange(isUser.Paths);
+                isUser.Paths = picturesList;
             }
             else
             {

@@ -2,7 +2,9 @@
 using Azure.Data.Tables;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
@@ -13,30 +15,30 @@ namespace AzureStorageLibrary.Models
 {
     public class UserPicture : ITableEntity
     {
-        public List<string> RawPaths { get; set; }
-        public List<string> WatermarkRawPaths { get; set; }
+        [AllowNull]
+        public string RawPaths { get; set; }
 
-        //[JsonIgnore]
-        //public List<string> Paths
-        //{
-        //    get => string.IsNullOrEmpty(RawPaths) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(RawPaths);
-        //    set => RawPaths = value == null || value.Count == 0 ? null : JsonSerializer.Serialize(value);
-        //}
-        //[JsonIgnore]
-        //public List<string> WatermarkPaths
-        //{
-        //    get => string.IsNullOrEmpty(RawPaths) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(WatermarkRawPaths);
-        //    set => WatermarkRawPaths = JsonSerializer.Serialize(value);
-        //}
+        [IgnoreDataMember]
+        public List<string> Paths
+        {
+            get => RawPaths == null ? null : JsonSerializer.Deserialize<List<string>>(RawPaths); 
+            
+            set => RawPaths = JsonSerializer.Serialize(value);
+        }
+
+        [AllowNull]
+        public string WatermarkRawPaths { get; set; }
+
+        [IgnoreDataMember]
+        public List<string> WatermarkPaths
+        {
+            get => WatermarkRawPaths == null ? null : JsonSerializer.Deserialize<List<string>>(WatermarkRawPaths);
+
+            set => WatermarkRawPaths = JsonSerializer.Serialize(value);
+        }
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
-
-        public UserPicture()
-        {
-            PartitionKey = string.Empty;
-            RowKey = string.Empty;
-        }
     }
 }

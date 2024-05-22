@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using AzureStorageLibrary.Interfaces;
+using AzureStorageLibrary.Models;
 using Microsoft.Extensions.Azure;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,18 @@ namespace AzureStorageLibrary.Services
 
             try
             {
+                // Debug amaçlı entity verilerini loglayın
+                Console.WriteLine("Entity PartitionKey: " + entity.PartitionKey);
+                Console.WriteLine("Entity RowKey: " + entity.RowKey);
+                Console.WriteLine("Entity RawPaths: " + (entity as UserPicture)?.RawPaths);
+                Console.WriteLine("Entity WatermarkRawPaths: " + (entity as UserPicture)?.WatermarkRawPaths);
+
+                // Null ve boş string kontrolü yapın
+                if (string.IsNullOrEmpty(entity.PartitionKey) || string.IsNullOrEmpty(entity.RowKey))
+                {
+                    throw new ArgumentException("PartitionKey and RowKey cannot be null or empty.");
+                }
+
                 await _tableClient.UpsertEntityAsync(entity, TableUpdateMode.Merge);
                 return entity;
             }
