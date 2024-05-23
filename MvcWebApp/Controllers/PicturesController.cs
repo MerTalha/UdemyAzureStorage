@@ -23,8 +23,8 @@ namespace MvcWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //ViewBag.UserId = UserId;
-            //ViewBag.City = City;
+            ViewBag.UserId = UserId;
+            ViewBag.City = City;
 
             List<FileBlob> fileBlobs = new List<FileBlob>();
 
@@ -75,6 +75,7 @@ namespace MvcWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddWatermark(PictureWatermarkQueue pictureWatermarkQueue)
         {
             var jsonString = JsonSerializer.Serialize(pictureWatermarkQueue);
