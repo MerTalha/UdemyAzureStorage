@@ -4,22 +4,22 @@
 }
 @section Scripts
 {
-@*     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
- *@    <script type="text/javascript">
+     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+     <script type="text/javascript">
 
         $(document).ready(() => {
-            // var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
+             var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
 
-            // connection.start().then(() => {
+             connection.start().then(() => {
 
-            //     console.log("Hub Connection Id:" + connection.connectionId)
-            // });
+                 console.log("Hub Connection Id:" + connection.connectionId)
+             });
 
-            // connection.on("NotifyCompleteWatermarkProcess", () => {
+             connection.on("NotifyCompleteWatermarkProcess", () => {
 
-            //     $("#status").html(`Resimlerinize yazı ekleme işlemi bitmiştir.<a  href="/pictures/showwatermark">işlenmiş resimlerinizi görmek için tıklayınız</a>`);
+                 $("#status").html(`Resimlerinize yazı ekleme işlemi bitmiştir.<a  href="/pictures/showwatermark">işlenmiş resimlerinizi görmek için tıklayınız</a>`);
 
-            // })
+             })
 
             var pictures = new Array();
 
@@ -29,7 +29,7 @@
             $("#AddWatermark").click(() => {
 
                 let pictureWatermarkQueue = {
-                    "UserId": UserId, "City": City, "ConnectionId": "123", "WatermarkText": $("#watermarkText").val(), "Picture": pictures
+                    "UserId": UserId, "City": City, "ConnectionId": connection.connectionId, "WatermarkText": $("#watermarkText").val(), "Picture": pictures
                 };
 
                 $.post("/Pictures/AddWatermark", pictureWatermarkQueue, (data) => {

@@ -1,6 +1,7 @@
 using AzureStorageLibrary;
 using AzureStorageLibrary.Interfaces;
 using AzureStorageLibrary.Services;
+using MvcWebApp.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ ConnectionStrings.AzureStorageConnectionString = builder.Configuration.GetSectio
 
 builder.Services.AddScoped(typeof(INoSqlStorage<>), typeof(TableStorage<>));
 builder.Services.AddSingleton<IBlobStorage, BlobStorage>();
+builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 
 
@@ -27,6 +29,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.MapHub<NotificationHub>("/NotificationHub");
 app.UseAuthorization();
 
 app.MapControllerRoute(
