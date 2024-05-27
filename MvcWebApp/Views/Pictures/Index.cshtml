@@ -9,17 +9,10 @@
 
         $(document).ready(() => {
              var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
+            connection.start().then(() => {
 
-             connection.start().then(() => {
-
-                 console.log("Hub Connection Id:" + connection.connectionId)
-             });
-
-             connection.on("NotifyCompleteWatermarkProcess", () => {
-
-                 $("#status").html(`Resimlerinize yazı ekleme işlemi bitmiştir.<a  href="/pictures/showwatermark">işlenmiş resimlerinizi görmek için tıklayınız</a>`);
-
-             })
+                console.log("Hub Connection Id:" + connection.connectionId)
+            });
 
             var pictures = new Array();
 
@@ -38,6 +31,16 @@
                 })
 
             })
+
+             
+
+             connection.on("NotifyCompleteWatermarkProcess", () => {
+
+                 $("#status").html(`Resimlerinize yazı ekleme işlemi bitmiştir.<a  href="/pictures/showwatermark">işlenmiş resimlerinizi görmek için tıklayınız</a>`);
+
+             })
+
+            
 
             $("#images img").click(function () {
 

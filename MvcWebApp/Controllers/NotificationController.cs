@@ -5,7 +5,7 @@ using MvcWebApp.Hubs;
 
 namespace MvcWebApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class NotificationController : ControllerBase
     {
@@ -16,6 +16,7 @@ namespace MvcWebApp.Controllers
             _hubContext = hubContext;
         }
 
+        [HttpGet("{connectionId}")]
         public IActionResult CompleteWatermarkProcess(string connectionId)
         {
             _hubContext.Clients.Client(connectionId).SendAsync("NotifyCompleteWatermarkProcess");

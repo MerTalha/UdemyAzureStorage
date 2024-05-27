@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AzureStorageLibrary;
 using AzureStorageLibrary.Interfaces;
@@ -44,6 +45,13 @@ namespace WatermarkProcessFunction
             userpPicture.WatermarkPaths = myQueueItem.Picture;
 
             await noSqlStorage.Add(userpPicture);
+
+
+            HttpClient httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync("https://localhost:7267/api/Notifications/CompleteWatermarkProcess/" + myQueueItem.ConnectionId);
+
+            log.LogInformation($"Client ({myQueueItem.ConnectionId}) bilgilendirilmiþtir");
 
 
 
