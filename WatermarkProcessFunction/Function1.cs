@@ -49,7 +49,7 @@ namespace WatermarkProcessFunction
 
             HttpClient httpClient = new HttpClient();
 
-            var response = await httpClient.GetAsync("https://localhost:7267/api/Notifications/CompleteWatermarkProcess/" + myQueueItem.ConnectionId);
+            var response = await httpClient.GetAsync("https://localhost:44368/api/Notifications/CompleteWatermarkProcess/" + myQueueItem.ConnectionId);
 
             log.LogInformation($"Client ({myQueueItem.ConnectionId}) bilgilendirilmiþtir");
 

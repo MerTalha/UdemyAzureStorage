@@ -75,6 +75,23 @@ namespace MvcWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> ShowWatermark()
+        {
+            List<FileBlob> fileBlobs = new List<FileBlob>();
+            UserPicture userPicture = await _noSqlStorage.Get(UserId, City);
+
+            userPicture.WatermarkPaths.ForEach(x =>
+            {
+                fileBlobs.Add(new FileBlob { Name = x, Url = $"{_blobStorage.BlobUrl}/{EContainerName.watermarkpictures}/{x}" });
+            });
+
+            ViewBag.fileBlobs = fileBlobs;
+
+            return View();
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> AddWatermark(PictureWatermarkQueue pictureWatermarkQueue)
         {
