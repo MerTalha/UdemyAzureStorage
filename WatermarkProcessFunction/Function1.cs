@@ -31,7 +31,7 @@ namespace WatermarkProcessFunction
 
                 using var memoryStream = AddWatermark(myQueueItem.WatermarkText,stream);
 
-                await blobStorage.UploadAsync(memoryStream, myQueueItem.WatermarkText + " " + item , EContainerName.watermarkpictures);
+                await blobStorage.UploadAsync(memoryStream, item , EContainerName.watermarkpictures);
 
                 log.LogInformation($"{item} resmine watermark ekleme iþlemi yapýlmýþtýr.");
             }
